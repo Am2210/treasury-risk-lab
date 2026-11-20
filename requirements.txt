@@ -1,0 +1,6 @@
+# Reference numerical environment (Python 3.11 and 3.12).
+numpy==1.26.4
+pandas==2.3.3
+# UI dependencies are bounded to supported major versions.
+streamlit>=1.37.1,<2
+altair>=5.0.1,<6

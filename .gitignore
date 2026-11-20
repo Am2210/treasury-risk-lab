@@ -1,0 +1,25 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+*.log
+.DS_Store
+.vscode/
+.idea/
+.streamlit/secrets.toml
+# Never commit credentials, Snowflake company config, or large exports
+snowflake.yml
+*.pem
+*.key
+*.p12
+*.pfx
+.streamlit/credentials.toml
+*.xlsx
+*.xlsm
+*.xls
+*.xlsb
+*.docx
