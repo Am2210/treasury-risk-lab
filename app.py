@@ -51,7 +51,7 @@ def market_view(curve, yields, history):
         tooltip=[alt.Tooltip("tenor_label:N", title="Tenor"),
                  alt.Tooltip("yield_pct:Q", title="Par yield (%)", format=".2f")],
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
     st.subheader("Yield and spread history")
     st.caption("Monthly average par yields and daily 10Y − 2Y spread")
@@ -65,13 +65,13 @@ def market_view(curve, yields, history):
         y=alt.Y("Yield:Q", title="Par yield (%)"),
         color=alt.Color("Tenor:N", sort=CORE_TENORS, legend=alt.Legend(orient="top")),
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
     spreads = compute_spreads(history)
     chart = alt.Chart(spreads).mark_line().encode(
         x=alt.X("date:T", title=None),
         y=alt.Y("10Y_2Y:Q", title="10Y − 2Y (bp)"),
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
 
 def portfolio_view(yields, spec):
@@ -94,7 +94,7 @@ def portfolio_view(yields, spec):
             "Face (USD)": "{:,.0f}", "Weight": "{:.1%}", "Coupon": "{:.2%}",
             "Value (USD)": "{:,.0f}", "Mod. duration (yr)": "{:.2f}",
             "DV01 (USD/bp)": "{:,.2f}",
-        }), hide_index=True, use_container_width=True,
+        }), hide_index=True, width="stretch",
     )
     st.caption("Coupons and initial YTMs equal the as-of par yields. Bonds pay semiannually on a regular coupon schedule.")
 
@@ -123,12 +123,12 @@ def stress_view(yields, spec):
     detail = result["position_details"][list(columns)].rename(columns=columns)
     st.dataframe(
         detail.style.format({col: "{:,.0f}" for col in detail.columns[1:]}),
-        hide_index=True, use_container_width=True,
+        hide_index=True, width="stretch",
     )
     st.caption("Only yields are shocked. Coupon rates, remaining maturities, and face values stay fixed.")
 
 
-@st.cache_data
+@st.cache_data(max_entries=32)
 def get_historical(history, as_of, start, yields, spec):
     scenarios = compute_historical_scenarios(history, as_of, yields, spec, start_date=start)
     attribution = risk_contribution_by_tenor(history, as_of, yields, spec, start_date=start)
@@ -150,14 +150,14 @@ def historical_view(history, as_of, start, yields, spec):
         x=alt.X("pnl_dollar:Q", bin=alt.Bin(maxbins=45), title="Scenario P&L (USD)"),
         y=alt.Y("count():Q", title="Scenarios"),
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
     st.subheader("95% Expected Shortfall by tenor")
     detail = attribution[["tenor", "es_contribution_95"]].rename(
         columns={"tenor": "Tenor", "es_contribution_95": "ES contribution (USD)"}
     )
     st.dataframe(detail.style.format({"ES contribution (USD)": "{:,.2f}"}),
-                 hide_index=True, use_container_width=True)
+                 hide_index=True, width="stretch")
     st.caption("Each tenor uses the same portfolio loss-tail scenarios and weights. Its signed contribution can offset losses on other tenors.")
     st.download_button("Download historical scenarios", scenarios.to_csv(index=False),
                        file_name=f"historical_scenarios_{as_of}.csv", mime="text/csv")
@@ -167,10 +167,10 @@ def show_risk_table(result):
     formats = {"VaR (USD)": "{:,.0f}", "ES (USD)": "{:,.0f}",
                "VaR (% of value)": "{:.3f}", "ES (% of value)": "{:.3f}"}
     st.dataframe(risk_table(result).style.format(formats),
-                 hide_index=True, use_container_width=True)
+                 hide_index=True, width="stretch")
 
 
-@st.cache_data
+@st.cache_data(max_entries=32)
 def get_pca(history, start, as_of):
     return run_pca(history, start_date=start, end_date=as_of)
 
@@ -190,7 +190,7 @@ def pca_view(history, start, as_of):
         color=alt.Color("Component:N", legend=alt.Legend(orient="top")),
         tooltip=["Component:N", "Tenor:N", alt.Tooltip("Loading:Q", format=".3f")],
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
     dates = result["changes_df"]["date"]
     st.caption(
         f"Covariance PCA · {result['n_observations']:,} aligned daily shocks · "
@@ -200,7 +200,7 @@ def pca_view(history, start, as_of):
         st.caption(note)
 
 
-@st.cache_data
+@st.cache_data(max_entries=32)
 def get_monte_carlo(history, yields, spec, start, as_of, num_simulations):
     return run_monte_carlo(
         history, yields, spec, n_simulations=num_simulations,

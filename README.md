@@ -8,7 +8,7 @@ Monte Carlo.
 
 ## Run locally
 
-Use Python 3.11 or 3.12. Run these commands in the repository root.
+Use Python 3.12. Run these commands in the repository root.
 
 ```powershell
 python -m venv .venv
@@ -24,6 +24,23 @@ On macOS or Linux, use `.venv/bin/python` for the last four commands. Open
 Open the sidebar to adjust the valuation date and faces. The historical view
 offers a scenario-level CSV export in USD and percent of initial portfolio value.
 
+## Streamlit Community Cloud
+
+- **Repository** `Am2210/treasury-risk-lab`
+- **Branch** `main`
+- **Main file path** `app.py`
+- **Python version** `3.12` under Advanced settings
+- **Secrets** leave blank
+- **App URL** choose an available subdomain, such as `treasury-risk-lab`
+
+Community Cloud installs the packages in `requirements.txt`. The app reads the
+bundled Treasury CSV and needs no additional data download or system packages.
+To deploy from a private repository, Community Cloud needs access to that repo.
+Its GitHub access and the app's viewer settings are managed separately.
+See the publication status below before enabling public viewing.
+[Community Cloud deployment guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy)
+[App sharing settings](https://docs.streamlit.io/deploy/streamlit-community-cloud/share-your-app)
+
 ## Reference run
 
 The default curve is December 31, 2024. Portfolio faces are $2 million, $3 million,
@@ -36,9 +53,8 @@ selected as-of date. The default historical sample contains 1,749 aligned yield 
 
 The validation command checks the archive row count, date range, selected par yields
 against published reference values, par pricing, and price sensitivity. It exits nonzero when a check fails.
-GitHub Actions is configured to run validation and tests on Ubuntu/Python 3.11 and
-Windows/Python 3.12. The local reference run used Python 3.12.7, NumPy 1.26.4,
-pandas 2.3.3, Streamlit 1.37.1, and Altair 5.0.1.
+GitHub Actions installs the declared dependencies in clean Python 3.12 environments
+on Debian 11 and Windows. The Debian job also checks Streamlit server startup.
 
 ## Data and valuation date
 

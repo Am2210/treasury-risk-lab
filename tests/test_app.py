@@ -14,7 +14,7 @@ class DashboardTests(unittest.TestCase):
     def test_all_views_render(self):
         app = AppTest.from_file(str(APP), default_timeout=20).run()
         self.assertFalse(app.exception)
-        self.assertEqual(len(app.get("arrow_vega_lite_chart")), 3)
+        self.assertEqual(len(app.get("vega_lite_chart")), 3)
 
         for view in ("Portfolio", "Stress test", "Historical risk", "PCA", "Monte Carlo"):
             with self.subTest(view=view):
